@@ -11,6 +11,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using System.Configuration;
 
 namespace TestIOTInterface
 {
@@ -30,10 +31,11 @@ namespace TestIOTInterface
 
         private static void GetServerDetails()
         {
-            var endpoint = @"https://oc-129-150-123-40.compute.oraclecloud.com/iot/api/v1/private/server";
-            var request = WebRequest.Create(endpoint);
-            var username = "adminuser";
-            var password = "IoTRocks1#";
+            var reader = new AppSettingsReader();
+            
+            var request = WebRequest.Create(reader.GetValue("endpoint", typeof(string)).ToString());
+            var username = reader.GetValue("endpoint", typeof(string)).ToString();
+            var password = reader.GetValue("endpoint", typeof(string)).ToString();
             var strResponseValue = String.Empty;
 
             String authHeaer = System.Convert.ToBase64String(
@@ -53,9 +55,9 @@ namespace TestIOTInterface
                 {
                     if (responseStream != null)
                     {
-                        using (var reader = new StreamReader(responseStream))
+                        using (var streamReader = new StreamReader(responseStream))
                         {
-                            strResponseValue = reader.ReadToEnd();
+                            strResponseValue = streamReader.ReadToEnd();
                         }
                     }
                 }
