@@ -21,7 +21,7 @@ namespace TestIOTInterface
         {
             var hostConfiguration = new HostConfiguration();
             hostConfiguration.RewriteLocalhost = true;
-            var nancyHost = new Nancy.Hosting.Self.NancyHost(hostConfiguration, new Uri(@"http://localhost:9000"));
+            var nancyHost = new Nancy.Hosting.Self.NancyHost(hostConfiguration, new Uri(@"http://localhost:9001"));
             nancyHost.Start();
             Console.WriteLine("Web server running...");
 

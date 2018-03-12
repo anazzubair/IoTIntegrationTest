@@ -32,6 +32,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="EntityFramework, Version=5.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.5.0.0\lib\net45\EntityFramework.dll</HintPath>
+    </Reference>
     <Reference Include="Nancy, Version=1.4.4.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Nancy.1.4.4\lib\net40\Nancy.dll</HintPath>
     </Reference>
@@ -42,7 +45,11 @@
       <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Data.Entity" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Security" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -51,15 +58,59 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Business\InvoiceManager.cs" />
+    <Compile Include="Data\ESuiteModel.Context.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ESuiteModel.Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\ESuiteModel.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ESuiteModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\ESuiteModel.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ESuiteModel.edmx</DependentUpon>
+    </Compile>
+    <Compile Include="Data\IotInvoice.cs">
+      <DependentUpon>ESuiteModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Model\Payload.cs" />
     <Compile Include="Modules\HelloModule.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utilities\DynamicModelBinder.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
+    <EntityDeploy Include="Data\ESuiteModel.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>ESuiteModel.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+    <None Include="Data\ESuiteModel.edmx.diagram">
+      <DependentUpon>ESuiteModel.edmx</DependentUpon>
+    </None>
     <None Include="packages.config" />
     <None Include="secrets.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Data\ESuiteModel.Context.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>ESuiteModel.Context.cs</LastGenOutput>
+      <DependentUpon>ESuiteModel.edmx</DependentUpon>
+    </Content>
+    <Content Include="Data\ESuiteModel.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>ESuiteModel.edmx</DependentUpon>
+      <LastGenOutput>ESuiteModel.cs</LastGenOutput>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
