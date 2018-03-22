@@ -9,8 +9,12 @@ namespace TestIot.Model
 {
     class Payload
     {
+        [JsonProperty("id")]
+        public String Id { get; set; }
+        [JsonProperty("sentTime")]
+        public double SentTime { get; set; }
         [JsonProperty("meterId")]
-        public double MeterId { get; set; }
+        public String MeterId { get; set; }
         [JsonProperty("billingFromDate")]
         public DateTime BillingFromDate { get; set; }
         [JsonProperty("billingToDate")]
@@ -21,3 +25,4 @@ namespace TestIot.Model
         public double CurrentMeterReading { get; set; }
     }
 }
+

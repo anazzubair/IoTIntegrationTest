@@ -26,5 +26,6 @@ namespace TestIot.Data
         }
     
         public DbSet<IotInvoice> IotInvoices { get; set; }
+        public DbSet<Message> Messages { get; set; }
     }
 }

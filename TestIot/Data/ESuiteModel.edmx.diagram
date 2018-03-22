@@ -6,6 +6,7 @@
     <edmx:Diagrams>
       <Diagram DiagramId="8412d83daae3424c9111f47d346fde1e" Name="Diagram1">
         <EntityTypeShape EntityType="Model.IotInvoice" Width="1.5" PointX="0.75" PointY="0.75" />
+        <EntityTypeShape EntityType="Model.Message" Width="1.5" PointX="3.375" PointY="0.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

@@ -44,8 +44,16 @@
           <Property Name="UOM_CODE" Type="varchar2" MaxLength="20" />
           <Property Name="LEGAL_ENTITY_ID" Type="varchar2" MaxLength="20" />
         </EntityType>
+        <EntityType Name="MESSAGES">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="varchar2" MaxLength="40" Nullable="false" />
+          <Property Name="SENTTIME" Type="number" Precision="38" Scale="0" Nullable="false" />
+        </EntityType>
         <EntityContainer Name="ModelStoreContainer">
           <EntitySet Name="IOT_INTERFACE_AR_INVOICE" EntityType="Self.IOT_INTERFACE_AR_INVOICE" Schema="APPS" store:Type="Tables" />
+          <EntitySet Name="MESSAGES" EntityType="Self.MESSAGES" Schema="APPS" store:Type="Tables" />
         </EntityContainer>
       </Schema></edmx:StorageModels>
     <!-- CSDL content -->
@@ -53,6 +61,7 @@
       <Schema Namespace="Model" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
         <EntityContainer Name="ESuiteEntities" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="IotInvoices" EntityType="Model.IotInvoice" />
+          <EntitySet Name="Messages" EntityType="Model.Message" />
         </EntityContainer>
         <EntityType Name="IotInvoice">
           <Key>
@@ -92,6 +101,13 @@
           <Property Name="TAX_CODE" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
           <Property Name="UOM_CODE" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
           <Property Name="LEGAL_ENTITY_ID" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="Message">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="String" Nullable="false" MaxLength="40" FixedLength="false" Unicode="false" />
+          <Property Name="SENTTIME" Type="Decimal" Nullable="false" Precision="38" Scale="0" />
         </EntityType>
       </Schema>
     </edmx:ConceptualModels>
@@ -136,6 +152,14 @@
                 <ScalarProperty Name="SET_OF_BOOKS_ID" ColumnName="SET_OF_BOOKS_ID" />
                 <ScalarProperty Name="BATCH_SOURCE_NAME" ColumnName="BATCH_SOURCE_NAME" />
                 <ScalarProperty Name="INTERFACE_LINE_ID" ColumnName="INTERFACE_LINE_ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Messages">
+            <EntityTypeMapping TypeName="Model.Message">
+              <MappingFragment StoreEntitySet="MESSAGES">
+                <ScalarProperty Name="SENTTIME" ColumnName="SENTTIME" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

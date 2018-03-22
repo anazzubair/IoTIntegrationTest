@@ -77,6 +77,9 @@
     <Compile Include="Data\IotInvoice.cs">
       <DependentUpon>ESuiteModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Data\Message.cs">
+      <DependentUpon>ESuiteModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Model\Payload.cs" />
     <Compile Include="Modules\HelloModule.cs" />
     <Compile Include="Program.cs" />
@@ -95,7 +98,9 @@
       <DependentUpon>ESuiteModel.edmx</DependentUpon>
     </None>
     <None Include="packages.config" />
-    <None Include="secrets.config" />
+    <None Include="secrets.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Data\ESuiteModel.Context.tt">
