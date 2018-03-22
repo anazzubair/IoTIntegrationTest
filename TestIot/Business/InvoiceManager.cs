@@ -90,8 +90,8 @@ namespace TestIot.Business
             using (var db = new ESuiteEntities())
             {
                 var lastSentTime = db.Messages.Max(m => (long?)m.SENTTIME);
-                if (lastSentTime == null) return 1521716484810;
-                return lastSentTime.Value;
+                if (lastSentTime == null) return 1521646805952;
+                return lastSentTime.Value + 1;
             }
         }
 

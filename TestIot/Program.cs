@@ -19,6 +19,7 @@ using System.Security.Cryptography.X509Certificates;
 using Newtonsoft.Json.Linq;
 using TestIot.Business;
 using TestIot.Model;
+using System.Threading;
 
 namespace TestIOTInterface
 {
@@ -58,67 +59,74 @@ namespace TestIOTInterface
             var username = appSettingsReader.GetValue("username", typeof(string)).ToString();
             var password = appSettingsReader.GetValue("password", typeof(string)).ToString();
             var url = appSettingsReader.GetValue("serverBase", typeof(string)).ToString() + appSettingsReader.GetValue("integrtionAlerts", typeof(string)).ToString();
-            var lastSentTime = new InvoiceManager().GetLastSentTime();
-            var filter = $"?since={lastSentTime}";
-            var filterUrl = url + filter;
+            
+            
 
             String responseContent;
 
             using (var httpClient = new HttpClient())
             {
-
+                
                 String authHeader = System.Convert.ToBase64String(ASCIIEncoding.ASCII.GetBytes(username + ":" + password));
                 //httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Authorization", "Basic " + authHeader);
                 httpClient.DefaultRequestHeaders.Add("Authorization", "Basic " + authHeader);
                 httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-                Console.WriteLine($"Messages URL {filterUrl}");
-                HttpResponseMessage response = httpClient.GetAsync(filterUrl).Result;
-
-
-                using (var responseStream = response.Content.ReadAsStreamAsync().Result)
+                while (true)
                 {
-                    if (responseStream == null) return;
-                    using (var streamReader = new StreamReader(responseStream))
+                    var lastSentTime = new InvoiceManager().GetLastSentTime();
+                    var filter = $"?since={lastSentTime}";
+                    var filterUrl = url + filter;
+                    Console.WriteLine($"Messages URL {filterUrl}");
+                    HttpResponseMessage response = httpClient.GetAsync(filterUrl).Result;
+
+
+                    using (var responseStream = response.Content.ReadAsStreamAsync().Result)
                     {
-                        responseContent = streamReader.ReadToEnd();
-                        var json = JObject.Parse(responseContent);
-                        var jsonArray = json.GetValue("items");
-                        //Console.WriteLine(json);
-                        dynamic model = JsonConvert.DeserializeObject<List<ExpandoObject>>(jsonArray.ToString());
-                        //var data = model[0].payload.data;
-                        //if (!((string)model[0].payload.format).Contains("pytdue")) return Nancy.HttpStatusCode.OK;
-
-                        foreach (var item in model)
+                        if (responseStream == null) return;
+                        using (var streamReader = new StreamReader(responseStream))
                         {
-                            //DisplayModel(item);
-                            var data = item.payload.data;
-                            var meterId = data.meterId;
-                            var billingFromDate = DateTime.ParseExact(data.billingFromDate, "dd/MM/yyyy", null);
-                            var billingToDate = DateTime.ParseExact(data.billingToDate, "dd/MM/yyyy", null);
-                            var lastMeterReading = double.Parse(data.lastMeterReading);
-                            var currentMeterReading = double.Parse(data.currentMeterReading);
-                            var sentTime = (double)item.sentTime;
-                            var id = item.id;
+                            responseContent = streamReader.ReadToEnd();
+                            var json = JObject.Parse(responseContent);
+                            var jsonArray = json.GetValue("items");
+                            //Console.WriteLine(json);
+                            dynamic model = JsonConvert.DeserializeObject<List<ExpandoObject>>(jsonArray.ToString());
+                            //var data = model[0].payload.data;
+                            //if (!((string)model[0].payload.format).Contains("pytdue")) return Nancy.HttpStatusCode.OK;
 
-                            Console.WriteLine($"{id}  {sentTime}");
+                            foreach (var item in model)
+                            {
+                                //DisplayModel(item);
+                                var data = item.payload.data;
+                                var meterId = data.meterId;
+                                var billingFromDate = DateTime.ParseExact(data.billingFromDate, "dd/MM/yyyy", null);
+                                var billingToDate = DateTime.ParseExact(data.billingToDate, "dd/MM/yyyy", null);
+                                var lastMeterReading = double.Parse(data.lastMeterReading);
+                                var currentMeterReading = double.Parse(data.currentMeterReading);
+                                var sentTime = (double)item.sentTime;
+                                var id = item.id;
+
+                                Console.WriteLine($"{id}  {sentTime}");
+                            }
+
+
+                            var items = from item in json["items"]
+                                        let data = item["payload"]["data"]
+                                        select new Payload
+                                        {
+                                            Id = item["id"].ToString(),
+                                            SentTime = (Double)item["sentTime"],
+                                            MeterId = data["meterId"].ToString(),
+                                            BillingToDate = DateTime.ParseExact(data["billingToDate"].ToString(), "dd/MM/yyyy", null),
+                                            BillingFromDate = DateTime.ParseExact(data["billingFromDate"].ToString(), "dd/MM/yyyy", null),
+                                            CurrentMeterReading = (Double)data["currentMeterReading"],
+                                            LastMeterReading = (Double)data["lastMeterReading"],
+                                        };
+
+                            new InvoiceManager().InsertMessages(items.ToList());
                         }
-
-
-                        var items = from item in json["items"]
-                                    let data = item["payload"]["data"]
-                                    select new Payload
-                                    {
-                                        Id = item["id"].ToString(),
-                                        SentTime = (Double)item["sentTime"],
-                                        MeterId = data["meterId"].ToString(),
-                                        BillingToDate = DateTime.ParseExact(data["billingToDate"].ToString(), "dd/MM/yyyy", null),
-                                        BillingFromDate = DateTime.ParseExact(data["billingFromDate"].ToString(), "dd/MM/yyyy", null),
-                                        CurrentMeterReading = (Double)data["currentMeterReading"],
-                                        LastMeterReading = (Double)data["lastMeterReading"],
-                                    };
-                        //new InvoiceManager().InsertMessages(items.ToList());
                     }
+                    Thread.Sleep(2000);
                 }
             }
         }
